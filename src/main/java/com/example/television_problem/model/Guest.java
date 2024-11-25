@@ -21,24 +21,9 @@ class Guest extends Thread {
 
     @Override
     public void run() {
-            while (true) {
+        while (true) {
 
-                controlTvService.assistirTV(id, canalPreferido);
 
-                long endTimeAssistindo = System.currentTimeMillis() + tempoAssistindo * 1000L;
-                while (System.currentTimeMillis() < endTimeAssistindo) {
-                    controleTV.assistirTV(id, canalPreferido);
-                }
-
-                controleTV.pararDeAssistir(id, canalPreferido);
-
-                // Simula tempo descansando (CPU-bound com acquire)
-                long endTimeDescansando = System.currentTimeMillis() + tempoDescansando * 1000L;
-                System.out.println("Hóspede " + id + " está descansando.");
-                while (System.currentTimeMillis() < endTimeDescansando) {
-                    // Trabalha de forma CPU-bound sem interferir em outros controles
-                }
-            }
-
+        }
     }
 }
