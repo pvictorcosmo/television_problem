@@ -1,4 +1,4 @@
-package com.example.television_problem.model;
+package org.example.television_problem.model;
 
 public class Television {
     public TelevisionStatus status;
