@@ -10,24 +10,32 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class ControlTvService {
-    private final MainViewModel viewModel;
+    public MainViewModel viewModel;
+    private static ControlTvService instance;
 
     private final Semaphore favoriteChannelSemaphore = new Semaphore(1);
     private final Semaphore tvOfflineSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
 
-    public ControlTvService(MainViewModel viewModel) {
+    private ControlTvService(MainViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
+    public static ControlTvService getInstance(MainViewModel viewModel) {
+        if (instance == null) {
+            instance = new ControlTvService(viewModel);
+        }
+        return instance;
+    }
+
     public void showSquare(int id) {
-        // Chama o método do ViewModel para adicionar um quadrado
+
         viewModel.addSquare(id);
     }
 
     public void hideSquare(int id) {
-        // Chama o método do ViewModel para remover o quadrado
+
         viewModel.removeSquare(id);
     }
 

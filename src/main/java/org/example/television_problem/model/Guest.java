@@ -1,6 +1,6 @@
 package org.example.television_problem.model;
 
-import org.example.television_problem.service.ControlTvService;
+import org.example.television_problem.view_model.MainViewModel;
 import org.example.television_problem.LogManager;
 import org.example.television_problem.Utils;
 import javafx.application.Platform;
@@ -12,17 +12,17 @@ public class Guest extends Thread {
     private final int favoriteChannel;
     private final int watchTime; // em segundos
     private final int restTime; // em segundos
-    private final ControlTvService controlTvService;
+    private final MainViewModel mainViewModel;
     private final Semaphore mutexChannelSemaphore = new Semaphore(1);
     private GuestStatus status;
 
-    public Guest(int id, int channel, int watchTime, int restTime, ControlTvService controlTvService,
+    public Guest(int id, int channel, int watchTime, int restTime, MainViewModel mainViewModel,
             GuestStatus status) {
         this.id = id;
         this.favoriteChannel = channel;
         this.watchTime = watchTime;
         this.restTime = restTime;
-        this.controlTvService = controlTvService;
+        this.mainViewModel = mainViewModel;
         this.status = status;
     }
 
@@ -46,11 +46,11 @@ public class Guest extends Thread {
             }
             // LogManager.logGuestStateChange(id, "");
 
-            if (controlTvService.getActuallyChannel() == -1) {
-                controlTvService.setActuallyChannel(favoriteChannel);
+            if (mainViewModel.getActuallyChannel() == -1) {
+                mainViewModel.setActuallyChannel(favoriteChannel);
                 try {
-                    controlTvService.acquireTvOffline();
-                    controlTvService.acquireFavoriteChannel();
+                    mainViewModel.acquireTvOffline();
+                    mainViewModel.acquireFavoriteChannel();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -58,14 +58,14 @@ public class Guest extends Thread {
             }
 
             // Verificar se o canal é o favorito
-            if (controlTvService.getActuallyChannel() == favoriteChannel) {
-                controlTvService.increaseSpectators();
+            if (mainViewModel.getActuallyChannel() == favoriteChannel) {
+                mainViewModel.increaseSpectators();
                 mutexChannelSemaphore.release();
-                Platform.runLater(() -> {
+                // Platform.runLater(() -> {
 
-                    this.status = GuestStatus.WATCHING;
-                    controlTvService.showSquare(id);
-                });
+                // this.status = GuestStatus.WATCHING;
+                // mainViewModel.addSquare(id);
+                // });
                 Utils.timeCpuBound(watchTime, () -> {
                     System.out.println("Hóspede " + id + " agora está: " + status);
 
@@ -79,20 +79,20 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                controlTvService.decreaseSpectators();
+                mainViewModel.decreaseSpectators();
 
                 // Se não houver mais espectadores, liberar o canal
-                if (controlTvService.getSpectators() == 0) {
-                    controlTvService.setActuallyChannel(-1);
-                    controlTvService.releaseTvOffline();
-                    controlTvService.releaseFavoriteChannel();
+                if (mainViewModel.getSpectators() == 0) {
+                    mainViewModel.setActuallyChannel(-1);
+                    mainViewModel.releaseTvOffline();
+                    mainViewModel.releaseFavoriteChannel();
                 }
 
                 mutexChannelSemaphore.release();
-                Platform.runLater(() -> {
-                    this.status = GuestStatus.WAITING;
-                    controlTvService.hideSquare(id); // Mostrar o quadrado com o ID
-                });
+                // Platform.runLater(() -> {
+                // this.status = GuestStatus.WAITING;
+                // mainViewModel.removeSquare(id); // Mostrar o quadrado com o ID
+                // });
                 Utils.timeCpuBound(restTime, () -> {
                     System.out.println("Hóspede " + id + " agora está: " + status);
 
@@ -102,7 +102,7 @@ public class Guest extends Thread {
             } else {
                 // Liberar canal se não for o favorito
                 mutexChannelSemaphore.release();
-                controlTvService.releaseFavoriteChannel();
+                mainViewModel.releaseFavoriteChannel();
             }
 
         }

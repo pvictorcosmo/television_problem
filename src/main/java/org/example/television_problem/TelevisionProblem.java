@@ -46,13 +46,12 @@ public class TelevisionProblem extends Application {
         primaryStage.setHeight(800); // Altura inicial
         primaryStage.show();
 
-        ControlTvService controlTvService = new ControlTvService(viewModel);
-
         // Cria e inicia vários Guests
-        Guest guest1 = new Guest(1, 5, 10, 5, controlTvService, GuestStatus.WAITING);
-        Guest guest2 = new Guest(2, 10, 15, 7, controlTvService, GuestStatus.WAITING);
-        Guest guest3 = new Guest(3, 11, 10, 5, controlTvService, GuestStatus.WAITING);
-        Guest guest4 = new Guest(4, 5, 15, 7, controlTvService, GuestStatus.WAITING);
+        Guest guest1 = new Guest(1, 1, 1, 1, viewModel, GuestStatus.WAITING);
+        Guest guest2 = new Guest(2, 2, 1, 1, viewModel, GuestStatus.WAITING);
+        Guest guest3 = new Guest(3, 3, 1, 1, viewModel,
+                GuestStatus.WAITING);
+        Guest guest4 = new Guest(4, 4, 1, 1, viewModel, GuestStatus.WAITING);
 
         // Inicia as threads dos Guests
         guest1.start();

@@ -2,6 +2,10 @@ package org.example.television_problem.view_model;
 
 import javafx.scene.Node;
 
+import java.util.concurrent.Semaphore;
+
+import org.example.television_problem.service.ControlTvService;
+
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -15,6 +19,11 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
 public class MainViewModel implements ViewModel {
+
+    private final Semaphore favoriteChannelSemaphore = new Semaphore(1);
+    private final Semaphore tvOfflineSemaphore = new Semaphore(1);
+    private int actuallyChannel = -1;
+    private int spectators;
 
     private ListProperty<StackPane> squares = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -55,7 +64,7 @@ public class MainViewModel implements ViewModel {
                             // Itera sobre os filhos do StackPane para encontrar uma Label
                             for (Node stackChild : stackPane.getChildren()) {
                                 if (stackChild instanceof Label label) {
-                                    System.out.println("STATUS: " + label.getText().equals("ID: " + id));
+                                    System.out.println("STATUS: " + label.getText().equals("ID: " + id) + " " + id);
                                     // Compara o texto da Label com o ID desejado
                                     return label.getText().equals("ID: " + id);
                                 }
@@ -68,4 +77,39 @@ public class MainViewModel implements ViewModel {
         });
     }
 
+    public int getSpectators() {
+        return this.spectators;
+    }
+
+    public void increaseSpectators() {
+        spectators++;
+    }
+
+    public void decreaseSpectators() {
+        spectators--;
+    }
+
+    public void acquireFavoriteChannel() throws InterruptedException {
+        favoriteChannelSemaphore.acquire();
+    }
+
+    public void releaseFavoriteChannel() {
+        favoriteChannelSemaphore.release();
+    }
+
+    public void acquireTvOffline() throws InterruptedException {
+        tvOfflineSemaphore.acquire();
+    }
+
+    public void releaseTvOffline() {
+        tvOfflineSemaphore.release();
+    }
+
+    public void setActuallyChannel(int channel) {
+        this.actuallyChannel = channel;
+    }
+
+    public int getActuallyChannel() {
+        return this.actuallyChannel;
+    }
 }

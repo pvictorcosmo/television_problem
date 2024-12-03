@@ -15,10 +15,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import org.example.television_problem.model.Guest;
+import org.example.television_problem.model.GuestStatus;
+import org.example.television_problem.service.ControlTvService;
 import org.example.television_problem.view_model.MainViewModel;
 
 public class MainView implements FxmlView<MainViewModel> {
-
+    Integer lastId = 0;
     @FXML
     private TextField durationField;
 
@@ -85,8 +88,12 @@ public class MainView implements FxmlView<MainViewModel> {
                 System.out.println("Canal: " + channel);
                 System.out.println("Tempo Assistindo TV (Ttv): " + ttvTime + " segundos");
                 System.out.println("Tempo Descansando (Td): " + tdTime + " segundos");
-
+                int id = lastId;
+                Guest guest = new Guest(id, channel, ttvTime, tdTime, viewModel, GuestStatus.BLOCKED);
+                lastId++;
+                guest.start();
                 // Fechar o popup
+
                 popupStage.close();
 
             } catch (NumberFormatException e) {
