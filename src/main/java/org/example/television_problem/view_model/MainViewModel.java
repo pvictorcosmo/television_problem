@@ -112,4 +112,9 @@ public class MainViewModel implements ViewModel {
     public int getActuallyChannel() {
         return this.actuallyChannel;
     }
+
+    public int checkFavoriteChannel()  throws InterruptedException {
+        int n = favoriteChannelSemaphore.availablePermits();
+        return n;
+    }
 }

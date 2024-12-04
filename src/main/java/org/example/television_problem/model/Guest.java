@@ -51,7 +51,7 @@ public class Guest extends Thread {
                 mainViewModel.setActuallyChannel(favoriteChannel);
                 try {
                     mainViewModel.acquireTvOffline();
-                    if(favoriteChannelSemaphore.availablePermits()==1){
+                    if(mainViewModel.checkFavoriteChannel()==1){
                         mainViewModel.acquireFavoriteChannel();
                     };
                 } catch (InterruptedException e) {
