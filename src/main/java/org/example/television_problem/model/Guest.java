@@ -51,7 +51,7 @@ public class Guest extends Thread {
                 mainViewModel.setActuallyChannel(favoriteChannel);
                 try {
                     mainViewModel.acquireTvOffline();
-                    if(favoriteChannelSemaphore.availablepermits()==1){
+                    if(favoriteChannelSemaphore.availablePermits()==1){
                         mainViewModel.acquireFavoriteChannel();
                     };
                 } catch (InterruptedException e) {
@@ -105,7 +105,13 @@ public class Guest extends Thread {
             } else {
                 // Liberar canal se não for o favorito
                 mutexChannelSemaphore.release();
-                mainViewModel.acquireFavoriteChannel();
+                try{
+                    mainViewModel.acquireFavoriteChannel();
+                }catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
             }
 
         }
