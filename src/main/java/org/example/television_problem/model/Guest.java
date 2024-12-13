@@ -13,7 +13,9 @@ public class Guest extends Thread {
     private final int watchTime; // em segundos
     private final int restTime; // em segundos
     private final MainViewModel mainViewModel;
-    private final Semaphore mutexChannelSemaphore = new Semaphore(1);
+    public static final Semaphore mutexChannelSemaphore = new Semaphore(1);
+    public static final Semaphore favoriteChannelSemaphore = new Semaphore(1);
+    public static Semaphore tvOfflineSemaphore = new Semaphore(1);
 
     private GuestStatus status;
 
@@ -50,9 +52,9 @@ public class Guest extends Thread {
             if (mainViewModel.getActuallyChannel() == -1) {
                 mainViewModel.setActuallyChannel(favoriteChannel);
                 try {
-                    mainViewModel.acquireTvOffline();
-                    if(mainViewModel.checkFavoriteChannel()==1){
-                        mainViewModel.acquireFavoriteChannel();
+                    tvOfflineSemaphore.acquire();
+                    if(favoriteChannelSemaphore.availablePermits()!=0){
+                        favoriteChannelSemaphore.acquire();
                     };
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
@@ -87,8 +89,8 @@ public class Guest extends Thread {
                 // Se não houver mais espectadores, liberar o canal
                 if (mainViewModel.getSpectators() == 0) {
                     mainViewModel.setActuallyChannel(-1);
-                    mainViewModel.releaseTvOffline();
-                    mainViewModel.releaseFavoriteChannel();
+                    tvOfflineSemaphore.release();
+                    favoriteChannelSemaphore.release();
                 }
 
                 mutexChannelSemaphore.release();
@@ -106,7 +108,7 @@ public class Guest extends Thread {
                 // Liberar canal se não for o favorito
                 mutexChannelSemaphore.release();
                 try{
-                    mainViewModel.acquireFavoriteChannel();
+                    favoriteChannelSemaphore.acquire();
                 }catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
