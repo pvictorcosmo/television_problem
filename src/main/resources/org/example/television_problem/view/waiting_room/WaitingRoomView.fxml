@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+    fx:controller="org.example.television_problem.view.waiting_room.WaitingRoomView">
+    <GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+        <!-- Segundo Componente: Dois quadrados azuis e retângulo marrom com círculos dourados -->
+        <VBox fx:id="secondComponent" spacing="10">
+            <HBox spacing="10">
+                <Rectangle fx:id="blueSquare1" width="50" height="50" fill="blue" />
+                <Rectangle fx:id="blueSquare2" width="50" height="50" fill="blue" />
+            </HBox>
+            <VBox spacing="10" alignment="CENTER">
+                <Rectangle fx:id="brownRectangle" width="200" height="50" fill="brown" />
+                <HBox spacing="5">
+                    <Circle fx:id="goldCircle1" radius="10" fill="gold" />
+                    <Circle fx:id="goldCircle2" radius="10" fill="gold" />
+                    <Circle fx:id="goldCircle3" radius="10" fill="gold" />
+                    <Circle fx:id="goldCircle4" radius="10" fill="gold" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </GridPane>
+</StackPane>

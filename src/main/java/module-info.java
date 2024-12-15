@@ -12,4 +12,11 @@ module org.example.television_problem {
     exports org.example.television_problem.service;
 
     opens org.example.television_problem.view to javafx.fxml;
+    opens org.example.television_problem.view.waiting_room to javafx.fxml;
+    opens org.example.television_problem.view.watching_room to javafx.fxml;
+    opens org.example.television_problem.view.event_logger to javafx.fxml;
+    opens org.example.television_problem.view.sleeping_room to javafx.fxml;
+    opens org.example.television_problem.view.lobby to javafx.fxml;
+    opens org.example.television_problem.view.guest to javafx.fxml;
+
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.Parent?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.television_problem.view.lobby.LobbyView">
+    <VBox>
+        <!-- Parede branca -->
+        <Pane style="-fx-background-color: white;" VBox.vgrow="ALWAYS" />
+
+        <!-- Chão com imagem pixel art e componentes -->
+        <AnchorPane VBox.vgrow="ALWAYS">
+            <!-- Imagem do Chão -->
+            <ImageView fitWidth="1000" preserveRatio="true" AnchorPane.bottomAnchor="0.0">
+                <Image url="@../assets/floor.png" />
+            </ImageView>
+
+            <!-- Televisão -->
+            <ImageView fitWidth="250" fitHeight="150" AnchorPane.topAnchor="-70.0" AnchorPane.leftAnchor="100.0">
+                <Image url="@../assets/tv.png" />
+            </ImageView>
+
+            <!-- Sofá -->
+            <ImageView fitWidth="220" fitHeight="130" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="113.0">
+                <Image url="@../assets/couch.png" />
+            </ImageView>
+
+            <!-- GuestView incluído como um componente -->
+            <fx:include source="../guest/GuestView.fxml" />
+        </AnchorPane>
+    </VBox>
+</StackPane>
