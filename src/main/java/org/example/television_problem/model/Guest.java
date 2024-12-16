@@ -1,5 +1,6 @@
 package org.example.television_problem.model;
 
+import org.example.television_problem.view_model.MainViewModel;
 import org.example.television_problem.view_model.lobby.LobbyViewModel;
 import org.example.television_problem.LogManager;
 import org.example.television_problem.Utils;
@@ -22,10 +23,7 @@ public class Guest extends Thread {
     private final int watchTime; // em segundos
     private final int restTime; // em segundos
     private final MainViewModel mainViewModel;
-    public static  Semaphore mutexChannelSemaphore = new Semaphore(1);
-    public static  Semaphore favoriteChannelSemaphore = new Semaphore(1);
     private final LobbyViewModel lobbyViewModel;
-    public static Semaphore tvOfflineSemaphore = new Semaphore(1);
     private DoubleProperty positionX = new SimpleDoubleProperty(100);
     private DoubleProperty positionY = new SimpleDoubleProperty(100);
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
@@ -90,7 +88,7 @@ public class Guest extends Thread {
         while (true) {
 
             try {
-                mutexChannelSemaphore.acquire();
+                MainViewModel.mutexChannelSemaphore.acquire();
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -100,9 +98,9 @@ public class Guest extends Thread {
             if (lobbyViewModel.getActuallyChannel() == -1) {
                 lobbyViewModel.setActuallyChannel(favoriteChannel);
                 try {
-                    tvOfflineSemaphore.acquire();
-                    if (favoriteChannelSemaphore.availablePermits() != 0) {
-                        favoriteChannelSemaphore.acquire();
+                    MainViewModel.tvOfflineSemaphore.acquire();
+                    if (MainViewModel.favoriteChannelSemaphore.availablePermits() != 0) {
+                        MainViewModel.favoriteChannelSemaphore.acquire();
                     }
                     ;
                 } catch (InterruptedException e) {
@@ -114,7 +112,7 @@ public class Guest extends Thread {
             // Verificar se o canal é o favorito
             if (lobbyViewModel.getActuallyChannel() == favoriteChannel) {
                 lobbyViewModel.increaseSpectators();
-                mutexChannelSemaphore.release();
+                MainViewModel.mutexChannelSemaphore.release();
                 System.out.println("Status Thread: " + this.status);
                 if (this.status == GuestStatus.BLOCKED) {
                     Platform.runLater(() -> {
@@ -144,7 +142,7 @@ public class Guest extends Thread {
                 System.out.println("Time's up!");
 
                 try {
-                    mutexChannelSemaphore.acquire();
+                    MainViewModel.mutexChannelSemaphore.acquire();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -154,11 +152,11 @@ public class Guest extends Thread {
                 // Se não houver mais espectadores, liberar o canal
                 if (lobbyViewModel.getSpectators() == 0) {
                     lobbyViewModel.setActuallyChannel(-1);
-                    tvOfflineSemaphore.release();
-                    favoriteChannelSemaphore.release();
+                    MainViewModel.tvOfflineSemaphore.release();
+                    MainViewModel.favoriteChannelSemaphore.release();
                 }
 
-                mutexChannelSemaphore.release();
+                MainViewModel.mutexChannelSemaphore.release();
                 Platform.runLater(() -> {
                     this.status = GuestStatus.WAITING;
 
@@ -185,9 +183,9 @@ public class Guest extends Thread {
                     // ir dormir
 
                 });
-                mutexChannelSemaphore.release();
+                MainViewModel.mutexChannelSemaphore.release();
                 try {
-                    favoriteChannelSemaphore.acquire();
+                    MainViewModel.favoriteChannelSemaphore.acquire();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
