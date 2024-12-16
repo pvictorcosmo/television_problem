@@ -13,8 +13,8 @@ public class Guest extends Thread {
     private final int watchTime; // em segundos
     private final int restTime; // em segundos
     private final MainViewModel mainViewModel;
-    public static final Semaphore mutexChannelSemaphore = new Semaphore(1);
-    public static final Semaphore favoriteChannelSemaphore = new Semaphore(1);
+    public static  Semaphore mutexChannelSemaphore = new Semaphore(1);
+    public static  Semaphore favoriteChannelSemaphore = new Semaphore(1);
     public static Semaphore tvOfflineSemaphore = new Semaphore(1);
 
     private GuestStatus status;
