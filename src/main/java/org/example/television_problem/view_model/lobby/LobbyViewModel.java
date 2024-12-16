@@ -3,6 +3,7 @@ package org.example.television_problem.view_model.lobby;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.example.television_problem.PopupUtil;
 import org.example.television_problem.model.Guest;
 import org.example.television_problem.model.GuestSprite;
 import org.example.television_problem.model.GuestStatus;
@@ -10,6 +11,7 @@ import org.example.television_problem.model.GuestStatus;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -181,6 +183,23 @@ public class LobbyViewModel implements ViewModel {
                 .getResource(sprite.getPath()).toExternalForm())); // Sprite
                                                                    // //
                                                                    // normal
+    }
+
+    private int lastId = 0;
+
+    public void openGuestForm() {
+        Platform.runLater(() -> {
+            PopupUtil.showFormPopup((name, channel, ttv, td) -> {
+                System.out.println("Formulário enviado!");
+                System.out.println("Nome: " + (name.isEmpty() ? "Não informado" : name));
+                System.out.println("Canal: " + channel);
+                System.out.println("Tempo Assistindo TV (Ttv): " + ttv + " segundos");
+                System.out.println("Tempo Descansando (Td): " + td + " segundos");
+
+                // Cria o hóspede e inicia sua thread
+                addNewGuest(lastId++, channel, ttv, td);
+            });
+        });
     }
 
     public DoubleProperty xProperty() {

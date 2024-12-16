@@ -61,6 +61,11 @@ public class LobbyView {
         }
     }
 
+    @FXML
+    private void handleAddGuestButton() {
+        viewModel.openGuestForm();
+    }
+
     private void createBedAndGuest(Guest guest) {
         // Calcular a posição da cama com base no índice (bedCount)
         double positionX = START_X + (bedCount * (BED_WIDTH + 10)); // Espaço de 10px entre camas

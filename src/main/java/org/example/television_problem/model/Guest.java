@@ -22,7 +22,6 @@ public class Guest extends Thread {
     private final int favoriteChannel;
     private final int watchTime; // em segundos
     private final int restTime; // em segundos
-    private final MainViewModel mainViewModel;
     private final LobbyViewModel lobbyViewModel;
     private DoubleProperty positionX = new SimpleDoubleProperty(100);
     private DoubleProperty positionY = new SimpleDoubleProperty(100);
