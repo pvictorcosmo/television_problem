@@ -1,9 +1,18 @@
 package org.example.television_problem.model;
 
-import org.example.television_problem.view_model.MainViewModel;
+import org.example.television_problem.view_model.lobby.LobbyViewModel;
 import org.example.television_problem.LogManager;
 import org.example.television_problem.Utils;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 import java.util.concurrent.Semaphore;
 
@@ -15,18 +24,57 @@ public class Guest extends Thread {
     private final MainViewModel mainViewModel;
     public static  Semaphore mutexChannelSemaphore = new Semaphore(1);
     public static  Semaphore favoriteChannelSemaphore = new Semaphore(1);
+    private final LobbyViewModel lobbyViewModel;
     public static Semaphore tvOfflineSemaphore = new Semaphore(1);
-
+    private DoubleProperty positionX = new SimpleDoubleProperty(100);
+    private DoubleProperty positionY = new SimpleDoubleProperty(100);
+    private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private GuestStatus status;
 
-    public Guest(int id, int channel, int watchTime, int restTime, MainViewModel mainViewModel,
+    public Guest(int id, int channel, int watchTime, int restTime, LobbyViewModel lobbyViewModel,
             GuestStatus status) {
         this.id = id;
         this.favoriteChannel = channel;
         this.watchTime = watchTime;
         this.restTime = restTime;
-        this.mainViewModel = mainViewModel;
+        this.lobbyViewModel = lobbyViewModel;
         this.status = status;
+    }
+
+    public ObjectProperty<Image> imageProperty() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image.set(image);
+    }
+
+    public Image getImage() {
+        return image.get();
+    }
+
+    public double getPositionX() {
+        return positionX.get();
+    }
+
+    public void setPositionX(double x) {
+        this.positionX.set(x);
+    }
+
+    public DoubleProperty positionXProperty() {
+        return positionX;
+    }
+
+    public double getPositionY() {
+        return positionY.get();
+    }
+
+    public void setPositionY(double y) {
+        this.positionY.set(y);
+    }
+
+    public DoubleProperty positionYProperty() {
+        return positionY;
     }
 
     public int getGuestId() {
@@ -49,13 +97,14 @@ public class Guest extends Thread {
             }
             // LogManager.logGuestStateChange(id, "");
 
-            if (mainViewModel.getActuallyChannel() == -1) {
-                mainViewModel.setActuallyChannel(favoriteChannel);
+            if (lobbyViewModel.getActuallyChannel() == -1) {
+                lobbyViewModel.setActuallyChannel(favoriteChannel);
                 try {
                     tvOfflineSemaphore.acquire();
-                    if(favoriteChannelSemaphore.availablePermits()!=0){
+                    if (favoriteChannelSemaphore.availablePermits() != 0) {
                         favoriteChannelSemaphore.acquire();
-                    };
+                    }
+                    ;
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -63,59 +112,90 @@ public class Guest extends Thread {
             }
 
             // Verificar se o canal é o favorito
-            if (mainViewModel.getActuallyChannel() == favoriteChannel) {
-                mainViewModel.increaseSpectators();
+            if (lobbyViewModel.getActuallyChannel() == favoriteChannel) {
+                lobbyViewModel.increaseSpectators();
                 mutexChannelSemaphore.release();
-                // Platform.runLater(() -> {
+                System.out.println("Status Thread: " + this.status);
+                if (this.status == GuestStatus.BLOCKED) {
+                    Platform.runLater(() -> {
+                        this.status = GuestStatus.WATCHING;
+                        // Movimento para a direita com o Runnable para movimentação para baixo depois
+                        lobbyViewModel.moveGuest(id, "LEFT", 600, () -> {
 
-                // this.status = GuestStatus.WATCHING;
-                // mainViewModel.addSquare(id);
-                // });
+                        });
+
+                        // lobbyViewModel.addSquare(id);
+                    });
+                } else if (this.status == GuestStatus.WAITING) {
+                    Platform.runLater(() -> {
+                        this.status = GuestStatus.WATCHING;
+                        lobbyViewModel.moveGuest(id, "UP", 300, () -> {
+                            lobbyViewModel.moveGuest(id, "LEFT", 300, () -> {
+
+                            });
+                        });
+                    });
+                }
                 Utils.timeCpuBound(watchTime, () -> {
+                    lobbyViewModel.setImage(this, GuestSprite.BACK2);
                     System.out.println("Hóspede " + id + " agora está: " + status);
 
                 });
                 System.out.println("Time's up!");
 
-                // Após o watch time, reduzir espectadores
                 try {
                     mutexChannelSemaphore.acquire();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                mainViewModel.decreaseSpectators();
+                lobbyViewModel.decreaseSpectators();
 
                 // Se não houver mais espectadores, liberar o canal
-                if (mainViewModel.getSpectators() == 0) {
-                    mainViewModel.setActuallyChannel(-1);
+                if (lobbyViewModel.getSpectators() == 0) {
+                    lobbyViewModel.setActuallyChannel(-1);
                     tvOfflineSemaphore.release();
                     favoriteChannelSemaphore.release();
                 }
 
                 mutexChannelSemaphore.release();
-                // Platform.runLater(() -> {
-                // this.status = GuestStatus.WAITING;
-                // mainViewModel.removeSquare(id); // Mostrar o quadrado com o ID
-                // });
+                Platform.runLater(() -> {
+                    this.status = GuestStatus.WAITING;
+
+                    // Movimento para a direita com o Runnable para movimentação para baixo depois
+                    lobbyViewModel.moveGuest(id, "RIGHT", 300, () -> {
+                        // Quando o movimento para a direita terminar, move para baixo
+                        lobbyViewModel.moveGuest(id, "DOWN", 300, () -> {
+                            // Aqui você pode adicionar mais movimentos, se necessário
+                            System.out.println("Hóspede " + id + " terminou de se mover para baixo");
+                        });
+                    });
+                });
                 Utils.timeCpuBound(restTime, () -> {
+                    lobbyViewModel.setImage(this, GuestSprite.BACK2);
+
                     System.out.println("Hóspede " + id + " agora está: " + status);
 
                 });
-                System.out.println("Time's up!");
 
             } else {
                 // Liberar canal se não for o favorito
+                Platform.runLater(() -> {
+                    this.status = GuestStatus.BLOCKED;
+                    // ir dormir
+
+                });
                 mutexChannelSemaphore.release();
-                try{
+                try {
                     favoriteChannelSemaphore.acquire();
-                }catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                
+
             }
 
         }
     }
+
 }

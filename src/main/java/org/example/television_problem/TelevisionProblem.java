@@ -24,7 +24,7 @@ public class TelevisionProblem extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Caminho para o arquivo FXML
-        String fxmlPath = "/org/example/television_problem/view/MainView.fxml";
+        String fxmlPath = "/org/example/television_problem/view/main/MainView.fxml";
 
         // Cria um FXMLLoader padrão
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -35,7 +35,7 @@ public class TelevisionProblem extends Application {
         // Obtém o ViewModel a partir do controlador e injeta-o no carregamento do FXML
         MainView mainView = loader.getController();
         MainViewModel viewModel = new MainViewModel(); // Criar o ViewModel
-        mainView.setViewModel(viewModel); // Injeção manual do ViewModel
+        // mainView.setViewModel(viewModel); // Injeção manual do ViewModel
 
         // Configura a cena
         Scene scene = new Scene(root);
@@ -43,21 +43,22 @@ public class TelevisionProblem extends Application {
         primaryStage.setTitle("Problema da televisão");
         // Definindo o tamanho inicial da janela
         primaryStage.setWidth(1000); // Largura inicial
-        primaryStage.setHeight(800); // Altura inicial
+        primaryStage.setHeight(700); // Altura inicial
+        primaryStage.setResizable(false);
         primaryStage.show();
 
         // Cria e inicia vários Guests
-        Guest guest1 = new Guest(1, 1, 1, 1, viewModel, GuestStatus.WAITING);
-        Guest guest2 = new Guest(2, 2, 1, 1, viewModel, GuestStatus.WAITING);
-        Guest guest3 = new Guest(3, 3, 1, 1, viewModel,
-                GuestStatus.WAITING);
-        Guest guest4 = new Guest(4, 4, 1, 1, viewModel, GuestStatus.WAITING);
+        // Guest guest1 = new Guest(1, 1, 1, 1, viewModel, GuestStatus.WAITING);
+        // Guest guest2 = new Guest(2, 2, 1, 1, viewModel, GuestStatus.WAITING);
+        // Guest guest3 = new Guest(3, 3, 1, 1, viewModel,
+        // GuestStatus.WAITING);
+        // Guest guest4 = new Guest(4, 4, 1, 1, viewModel, GuestStatus.WAITING);
 
         // Inicia as threads dos Guests
-        guest1.start();
-        guest2.start();
-        guest3.start();
-        guest4.start();
+        // guest1.start();
+        // guest2.start();
+        // guest3.start();
+        // guest4.start();
     }
 
 }

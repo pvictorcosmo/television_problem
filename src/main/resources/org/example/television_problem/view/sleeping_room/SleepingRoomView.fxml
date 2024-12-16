@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+    fx:controller="org.example.television_problem.view.sleeping_room.SleepingRoomView">
+    <GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+        <!-- Terceiro Componente: Retângulo com círculo -->
+        <HBox fx:id="thirdComponent" spacing="10" alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER">
+                <Rectangle fx:id="grayRectangle1" width="100" height="50" fill="lightgray" />
+                <Circle fx:id="whiteCircle" radius="20" fill="white" />
+            </VBox>
+            <VBox spacing="10" alignment="CENTER">
+                <Rectangle fx:id="grayRectangle2" width="100" height="50" fill="lightgray" />
+                <Circle fx:id="whiteCircle2" radius="20" fill="white" />
+            </VBox>
+        </HBox>
+    </GridPane>
+
+</StackPane>

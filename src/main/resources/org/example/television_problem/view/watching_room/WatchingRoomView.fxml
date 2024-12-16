@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+    fx:controller="org.example.television_problem.view.watching_room.WatchingRoomView">
+    <GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+        <!-- Primeiro Componente: Retângulo preto e barra cinza escura com círculos brancos -->
+        <VBox fx:id="firstComponent" spacing="10">
+            <Rectangle fx:id="blackRectangle" width="200" height="100" fill="black" />
+            <HBox fx:id="grayBar" spacing="5" alignment="CENTER">
+                <Rectangle fx:id="grayRectangle" width="200" height="50" fill="darkgray" />
+                <Circle fx:id="whiteCircle1" radius="10" fill="white" />
+                <Circle fx:id="whiteCircle2" radius="10" fill="white" />
+                <Circle fx:id="whiteCircle3" radius="10" fill="white" />
+                <Circle fx:id="whiteCircle4" radius="10" fill="white" />
+            </HBox>
+        </VBox>
+    </GridPane>
+</StackPane>

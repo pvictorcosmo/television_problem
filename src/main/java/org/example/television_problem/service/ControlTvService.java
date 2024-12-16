@@ -12,19 +12,18 @@ import javafx.scene.shape.Rectangle;
 public class ControlTvService {
     public MainViewModel viewModel;
     private static ControlTvService instance;
-
+    public int channels = -1;
     private final Semaphore favoriteChannelSemaphore = new Semaphore(1);
     private final Semaphore tvOfflineSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
 
-    private ControlTvService(MainViewModel viewModel) {
-        this.viewModel = viewModel;
+    private ControlTvService() {
     }
 
-    public static ControlTvService getInstance(MainViewModel viewModel) {
+    public static ControlTvService getInstance() {
         if (instance == null) {
-            instance = new ControlTvService(viewModel);
+            instance = new ControlTvService();
         }
         return instance;
     }

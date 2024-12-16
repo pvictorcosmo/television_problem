@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+    fx:controller="org.example.television_problem.view.event_logger.EventLoggerView">
+    <GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+        <!-- Quarto Componente: Log de eventos -->
+        <VBox fx:id="fourthComponent" spacing="10" alignment="CENTER">
+            <Label fx:id="logLabel" text="Log de Eventos" />
+            <TextArea fx:id="logArea" prefWidth="300" prefHeight="200" wrapText="true" />
+        </VBox>
+    </GridPane>
+</StackPane>

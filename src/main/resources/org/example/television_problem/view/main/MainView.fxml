@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.television_problem.view.MainView">
+    <VBox alignment="CENTER" spacing="20">
+        <Label text="Bem-vindo à aplicação!" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+        <Label text="Quantos canais a televisão deve ter?" style="-fx-font-size: 18px;" />
+
+        <!-- Campo para entrada numérica -->
+        <TextField fx:id="channelInput" promptText="Número de canais" maxWidth="200" />
+
+        <!-- Botão para iniciar -->
+        <Button text="Iniciar no saguão" onAction="#handleInitButton" style="-fx-font-size: 16px;" />
+    </VBox>
+</StackPane>

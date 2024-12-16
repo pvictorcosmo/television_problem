@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.Parent?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.television_problem.view.guest.GuestView">
+    <ImageView fx:id="spriteView" />
+</AnchorPane>
