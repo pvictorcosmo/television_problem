@@ -38,7 +38,7 @@ public class MainView implements FxmlView<MainViewModel> {
             // Captura o número de canais (opcional: valide se é um número válido)
             String channels = channelInput.getText();
             System.out.println("Número de canais: " + channels);
-
+            ControlTvService.getInstance().channels = Integer.parseInt(channels);
             // Carrega a próxima tela (MainView.fxml)
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/org/example/television_problem/view/lobby/LobbyView.fxml"));

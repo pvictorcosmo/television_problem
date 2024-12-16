@@ -3,7 +3,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.Parent?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.television_problem.view.lobby.LobbyView">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="org.example.television_problem.view.lobby.LobbyView">
     <VBox>
         <!-- Parede branca -->
         <Pane style="-fx-background-color: white;" VBox.vgrow="ALWAYS" />
@@ -16,17 +17,27 @@
             </ImageView>
 
             <!-- Televisão -->
-            <ImageView fitWidth="250" fitHeight="150" AnchorPane.topAnchor="-70.0" AnchorPane.leftAnchor="100.0">
+            <ImageView fitWidth="250" fitHeight="150" AnchorPane.topAnchor="-10.0"
+                AnchorPane.leftAnchor="100.0">
                 <Image url="@../assets/tv.png" />
             </ImageView>
 
             <!-- Sofá -->
-            <ImageView fitWidth="220" fitHeight="130" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="113.0">
+            <ImageView fitWidth="220" fitHeight="130" AnchorPane.bottomAnchor="320.0"
+                AnchorPane.leftAnchor="113.0">
                 <Image url="@../assets/couch.png" />
             </ImageView>
+            <HBox fx:id="bedContainer" spacing="10" alignment="CENTER"
+                AnchorPane.topAnchor="50.0" AnchorPane.rightAnchor="200.0">
+                <!-- As camas serão adicionadas aqui dinamicamente -->
+            </HBox>
 
-            <!-- GuestView incluído como um componente -->
-            <fx:include source="../guest/GuestView.fxml" />
+            <!-- Container para os sprites dos Guests -->
+            <Pane fx:id="guestContainer" prefWidth="1000" prefHeight="600"
+                AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                <!-- Os Guests serão adicionados aqui dinamicamente -->
+            </Pane>
         </AnchorPane>
     </VBox>
 </StackPane>

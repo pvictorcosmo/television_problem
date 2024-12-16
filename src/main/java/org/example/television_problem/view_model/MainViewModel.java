@@ -20,8 +20,8 @@ import javafx.scene.paint.Color;
 
 public class MainViewModel implements ViewModel {
 
-    private final Semaphore favoriteChannelSemaphore = new Semaphore(1);
-    private final Semaphore tvOfflineSemaphore = new Semaphore(1);
+    public static final Semaphore favoriteChannelSemaphore = new Semaphore(1);
+    public static Semaphore tvOfflineSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
 
@@ -89,22 +89,6 @@ public class MainViewModel implements ViewModel {
         spectators--;
     }
 
-    public void acquireFavoriteChannel() throws InterruptedException {
-        favoriteChannelSemaphore.acquire();
-    }
-
-    public void releaseFavoriteChannel() {
-        favoriteChannelSemaphore.release();
-    }
-
-    public void acquireTvOffline() throws InterruptedException {
-        tvOfflineSemaphore.acquire();
-    }
-
-    public void releaseTvOffline() {
-        tvOfflineSemaphore.release();
-    }
-
     public void setActuallyChannel(int channel) {
         this.actuallyChannel = channel;
     }
@@ -113,8 +97,4 @@ public class MainViewModel implements ViewModel {
         return this.actuallyChannel;
     }
 
-    public int checkFavoriteChannel() throws InterruptedException {
-        int n = favoriteChannelSemaphore.availablePermits();
-        return n;
-    }
 }

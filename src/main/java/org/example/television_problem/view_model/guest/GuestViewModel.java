@@ -1,5 +1,8 @@
 package org.example.television_problem.view_model.guest;
 
+import org.example.television_problem.model.Guest;
+import org.example.television_problem.model.GuestStatus;
+
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -23,6 +26,7 @@ public class GuestViewModel implements ViewModel {
     private Timeline timeline;
 
     public GuestViewModel() {
+
         loadFrames();
         currentImage.set(frontFrames[0]); // Imagem inicial
         initTimeline();

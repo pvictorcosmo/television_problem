@@ -51,7 +51,7 @@ public class TelevisionProblem extends Application {
         // Guest guest1 = new Guest(1, 1, 1, 1, viewModel, GuestStatus.WAITING);
         // Guest guest2 = new Guest(2, 2, 1, 1, viewModel, GuestStatus.WAITING);
         // Guest guest3 = new Guest(3, 3, 1, 1, viewModel,
-        //         GuestStatus.WAITING);
+        // GuestStatus.WAITING);
         // Guest guest4 = new Guest(4, 4, 1, 1, viewModel, GuestStatus.WAITING);
 
         // Inicia as threads dos Guests
