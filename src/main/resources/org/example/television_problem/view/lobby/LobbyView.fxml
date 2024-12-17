@@ -19,7 +19,7 @@
             <!-- Televisão -->
             <ImageView fitWidth="250" fitHeight="150" AnchorPane.topAnchor="-10.0"
                 AnchorPane.leftAnchor="100.0">
-                <Image url="@../assets/tv.png" />
+                <ImageView image="${tvImage}" />
             </ImageView>
 
             <!-- Sofá -->

@@ -183,6 +183,23 @@ public class LobbyViewModel implements ViewModel {
                                                                    // normal
     }
 
+    private Image[] channelImages;
+
+    private void loadChannelImages() {
+        channelImages = new Image[] {
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/tv.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal1.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal2.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal3.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal4.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal5.png").toExternalForm()),
+            new Image(getClass().getResource("/org/example/television_problem/view/assets/canal6.png").toExternalForm()),
+        };
+        
+        tvImage.set(channelImages[0]);
+    }
+    public ObjectProperty<Image> tvImage = new SimpleObjectProperty<>();
+
     public DoubleProperty xProperty() {
         return x;
     }
@@ -218,8 +235,16 @@ public class LobbyViewModel implements ViewModel {
         spectators--;
     }
 
+
     public void setActuallyChannel(int channel) {
         this.actuallyChannel = channel;
+        if (channel >= 0 && channel < channelImages.length) {
+            tvImage.set(channelImages[channel]);
+        }
+    }
+
+    public ObjectProperty<Image> tvImageProperty() {
+        return tvImage;
     }
 
     public int getActuallyChannel() {

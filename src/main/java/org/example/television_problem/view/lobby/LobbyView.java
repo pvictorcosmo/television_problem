@@ -28,7 +28,9 @@ public class LobbyView {
     @FXML
     private HBox bedContainer; // Container para as camas
     @FXML
-    private Pane guestContainer; // Container para os sprites dos Guests
+    private Pane guestContainer;
+    @FXML
+    private ImageView tvImageView; // Container para os sprites dos Guests
 
     @InjectViewModel
     private LobbyViewModel viewModel;
@@ -36,6 +38,7 @@ public class LobbyView {
     // Método de inicialização
     public void initialize() {
         this.viewModel = new LobbyViewModel();
+        tvImageView.imageProperty().bind(viewModel.tvImageProperty());
         ObservableList<Guest> guests = viewModel.getGuests();
         int numBeds = ControlTvService.getInstance().channels;
 
@@ -113,5 +116,9 @@ public class LobbyView {
     private void removeGuestAndBed(Guest guest) {
         guestContainer.getChildren().removeIf(node -> (node instanceof ImageView && node.getUserData() == guest));
     }
+    
+    
+
+
 
 }
