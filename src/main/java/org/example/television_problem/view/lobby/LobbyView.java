@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -88,7 +89,7 @@ public class LobbyView {
         guestView.setFitWidth(GUEST_WIDTH);
         guestView.setFitHeight(GUEST_HEIGHT);
 
-        // Inicialmente, defina o sprite normal para o guest
+        // Definir o sprite inicial para o guest
         guest.setImage(new Image(getClass()
                 .getResource("/org/example/television_problem/view/assets/guest_sprite.png").toExternalForm()));
 
@@ -107,8 +108,22 @@ public class LobbyView {
         guestView.translateYProperty().bind(Bindings.createDoubleBinding(
                 () -> guest.getPositionY(), guest.positionYProperty()));
 
-        // Adicionar o Guest ao container
-        guestContainer.getChildren().add(guestView);
+        // Criar o ID Label para o Guest
+        Label idLabel = new Label();
+        idLabel.setText("ID: " + guest.getGuestId()); // Exibir o ID do guest
+        idLabel.setStyle(
+                "-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: black;");
+        idLabel.setTranslateX(positionX + (BED_WIDTH - GUEST_WIDTH) / 2); // Centraliza o label na cama
+        idLabel.setTranslateY(positionY - 20); // Coloca o label acima do sprite
+
+        // Vincular posição do ID Label ao modelo do Guest
+        idLabel.translateXProperty().bind(Bindings.createDoubleBinding(
+                () -> guest.getPositionX() + (BED_WIDTH - GUEST_WIDTH) / 2, guest.positionXProperty()));
+        idLabel.translateYProperty().bind(Bindings.createDoubleBinding(
+                () -> guest.getPositionY() - 20, guest.positionYProperty()));
+
+        // Adicionar o Guest e o ID Label ao container
+        guestContainer.getChildren().addAll(guestView, idLabel);
 
         // Incrementar o contador de camas
         bedCount++;

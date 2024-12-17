@@ -216,7 +216,7 @@ public class LobbyViewModel implements ViewModel {
 
     // Método para adicionar um novo hóspede dinamicamente
     public void addNewGuest(int id, int channel, int watchTime, int restTime) {
-        Guest guest = new Guest(id, channel, watchTime, restTime, this, GuestStatus.WAITING);
+        Guest guest = new Guest(id, channel, watchTime, restTime, this, GuestStatus.BLOCKED);
         guests.add(guest);
         guest.start();
     }
