@@ -25,6 +25,8 @@ public class Guest extends Thread {
     private final LobbyViewModel lobbyViewModel;
     private DoubleProperty positionX = new SimpleDoubleProperty(100);
     private DoubleProperty positionY = new SimpleDoubleProperty(100);
+    private DoubleProperty bedPositionX = new SimpleDoubleProperty(100);
+    private DoubleProperty bedPositionY = new SimpleDoubleProperty(100);
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private GuestStatus status;
 
@@ -62,6 +64,18 @@ public class Guest extends Thread {
         return positionX;
     }
 
+    public double getBedPositionX() {
+        return bedPositionX.get();
+    }
+
+    public void setBedPositionX(double x) {
+        this.bedPositionX.set(x);
+    }
+
+    public DoubleProperty bedPositionXProperty() {
+        return bedPositionX;
+    }
+
     public double getPositionY() {
         return positionY.get();
     }
@@ -72,6 +86,18 @@ public class Guest extends Thread {
 
     public DoubleProperty positionYProperty() {
         return positionY;
+    }
+
+    public double getBedPositionY() {
+        return bedPositionY.get();
+    }
+
+    public void setBedPositionY(double y) {
+        this.bedPositionY.set(y);
+    }
+
+    public DoubleProperty bedPositionYProperty() {
+        return bedPositionY;
     }
 
     public int getGuestId() {
@@ -160,6 +186,7 @@ public class Guest extends Thread {
                     this.status = GuestStatus.WAITING;
 
                     // Movimento para a direita com o Runnable para movimentação para baixo depois
+
                     lobbyViewModel.moveGuest(id, "RIGHT", 300, () -> {
                         // Quando o movimento para a direita terminar, move para baixo
                         lobbyViewModel.moveGuest(id, "DOWN", 300, () -> {
@@ -167,6 +194,13 @@ public class Guest extends Thread {
                             System.out.println("Hóspede " + id + " terminou de se mover para baixo");
                         });
                     });
+                    // lobbyViewModel.moveGuest(id, "RIGHT", 300, () -> {
+                    // // Quando o movimento para a direita terminar, move para baixo
+                    // lobbyViewModel.moveGuest(id, "DOWN", 300, () -> {
+                    // // Aqui você pode adicionar mais movimentos, se necessário
+                    // System.out.println("Hóspede " + id + " terminou de se mover para baixo");
+                    // });
+                    // });
                 });
                 Utils.timeCpuBound(restTime, () -> {
                     lobbyViewModel.setImage(this, GuestSprite.BACK2);
@@ -177,11 +211,7 @@ public class Guest extends Thread {
 
             } else {
                 // Liberar canal se não for o favorito
-                Platform.runLater(() -> {
-                    this.status = GuestStatus.BLOCKED;
-                    // ir dormir
 
-                });
                 MainViewModel.mutexChannelSemaphore.release();
                 try {
                     MainViewModel.favoriteChannelSemaphore.acquire();
@@ -189,6 +219,13 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                Platform.runLater(() -> {
+                    this.status = GuestStatus.BLOCKED;
+                    // ir dormir
+                    lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
+                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
+                    });
+                });
 
             }
 

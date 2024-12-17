@@ -102,6 +102,8 @@ public class LobbyView {
 
         guest.setPositionX(positionX);
         guest.setPositionY(positionY);
+        guest.setBedPositionX(positionX);
+        guest.setBedPositionY(positionY);
         // Vincular posição do Guest ao modelo
         guestView.translateXProperty().bind(Bindings.createDoubleBinding(
                 () -> guest.getPositionX(), guest.positionXProperty()));

@@ -55,6 +55,32 @@ public class LobbyViewModel implements ViewModel {
     private int currentFrame = 0;
     private Timeline timeline;
 
+    public void moveGuestToBed(int guestId, double bedX, double bedY, Runnable onFinish) {
+        for (Guest guest : guests) {
+            if (guest.getGuestId() == guestId) {
+                // Calcular distâncias
+                double currentX = guest.getPositionX();
+                double currentY = guest.getPositionY();
+                double deltaX = bedX - currentX;
+                double deltaY = bedY - currentY;
+
+                // Determinar direções
+                String horizontalDirection = deltaX > 0 ? "RIGHT" : "LEFT";
+                String verticalDirection = deltaY > 0 ? "DOWN" : "UP";
+
+                // Distâncias absolutas
+                int distanceX = (int) Math.abs(deltaX);
+                int distanceY = (int) Math.abs(deltaY);
+
+                // Primeiro movimento horizontal, depois vertical
+                moveGuest(guestId, horizontalDirection, distanceX, () -> {
+                    moveGuest(guestId, verticalDirection, distanceY, onFinish);
+                });
+                break;
+            }
+        }
+    }
+
     private void loadFrames() {
         normalSprite = new Image(getClass()
                 .getResource("/org/example/television_problem/view/assets/guest_sprite.png").toExternalForm());
@@ -181,8 +207,7 @@ public class LobbyViewModel implements ViewModel {
         System.out.println("patH: " + sprite.getPath());
         guest.setImage(new Image(getClass()
                 .getResource(sprite.getPath()).toExternalForm())); // Sprite
-                                                                   // //
-                                                                   // normal
+
     }
 
     private int lastId = 0;
