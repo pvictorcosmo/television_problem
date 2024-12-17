@@ -19,9 +19,16 @@
 
             <!-- Televisão -->
             <ImageView fitWidth="250" fitHeight="150" AnchorPane.topAnchor="-10.0"
-                AnchorPane.leftAnchor="100.0">
+                AnchorPane.leftAnchor="100.0" fx:id="tvImage">
                 <Image url="@../assets/tv.png" />
+                <!-- <ImageView image="${tvImage}" /> -->
             </ImageView>
+            <HBox fx:id="televisionContent" spacing="10" alignment="CENTER"
+                AnchorPane.topAnchor="-10.0"
+                AnchorPane.leftAnchor="100.0"  prefWidth="250" prefHeight="150">
+                <!-- As camas serão adicionadas aqui dinamicamente -->
+            </HBox>
+
 
             <!-- Sofá -->
             <ImageView fitWidth="220" fitHeight="130" AnchorPane.bottomAnchor="320.0"

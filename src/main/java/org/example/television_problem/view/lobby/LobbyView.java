@@ -29,17 +29,36 @@ public class LobbyView {
     @FXML
     private HBox bedContainer; // Container para as camas
     @FXML
-    private Pane guestContainer; // Container para os sprites dos Guests
+    private Pane guestContainer;
+    @FXML
+    private HBox televisionContent;
 
     @InjectViewModel
     private LobbyViewModel viewModel;
+
+    private void updateImage(String imagePath) {
+        // Carrega a nova imagem
+        System.out.println("path image:" + imagePath);
+        Image image = new Image(getClass().getResourceAsStream(imagePath));
+        System.out.println("Change channel");
+        // Cria o ImageView para exibir a imagem
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(televisionContent.getPrefWidth());
+        imageView.setFitHeight(televisionContent.getPrefHeight());
+
+        // Remove imagens antigas e adiciona a nova
+        televisionContent.getChildren().clear();
+        televisionContent.getChildren().add(imageView);
+    }
 
     // Método de inicialização
     public void initialize() {
         this.viewModel = new LobbyViewModel();
         ObservableList<Guest> guests = viewModel.getGuests();
         int numBeds = ControlTvService.getInstance().channels;
-
+        viewModel.currentImagePathProperty().addListener((obs, oldPath, newPath) -> {
+            updateImage(newPath);
+        });
         // Listener para adicionar ou remover sprites conforme a lista de guests mudar
         guests.addListener((ListChangeListener<Guest>) change -> {
             while (change.next()) {

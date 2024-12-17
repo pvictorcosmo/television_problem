@@ -122,6 +122,10 @@ public class Guest extends Thread {
 
             if (lobbyViewModel.getActuallyChannel() == -1) {
                 lobbyViewModel.setActuallyChannel(favoriteChannel);
+                Platform.runLater(()->{
+                    lobbyViewModel.updateChannel(favoriteChannel);
+                });
+
                 try {
                     MainViewModel.tvOfflineSemaphore.acquire();
                     if (MainViewModel.favoriteChannelSemaphore.availablePermits() != 0) {

@@ -18,8 +18,11 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class LobbyViewModel implements ViewModel {
@@ -45,6 +48,17 @@ public class LobbyViewModel implements ViewModel {
 
     public ListProperty<Guest> getGuests() {
         return this.guests;
+    }
+
+    private final StringProperty currentImagePath = new SimpleStringProperty();
+
+    public StringProperty currentImagePathProperty() {
+        return currentImagePath;
+    }
+
+    public void updateChannel(int channel) {
+        String path = "/org/example/television_problem/view/assets/canal" + channel + ".png";
+        currentImagePath.set(path);
     }
 
     private final DoubleProperty x = new SimpleDoubleProperty(1000);
@@ -227,6 +241,8 @@ public class LobbyViewModel implements ViewModel {
         });
     }
 
+    public ObjectProperty<Image> tvImage = new SimpleObjectProperty<>();
+
     public DoubleProperty xProperty() {
         return x;
     }
@@ -264,6 +280,11 @@ public class LobbyViewModel implements ViewModel {
 
     public void setActuallyChannel(int channel) {
         this.actuallyChannel = channel;
+
+    }
+
+    public ObjectProperty<Image> tvImageProperty() {
+        return tvImage;
     }
 
     public int getActuallyChannel() {
