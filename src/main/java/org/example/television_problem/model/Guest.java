@@ -223,7 +223,7 @@ public class Guest extends Thread {
                 }
                 sleeepersnow = lobbyViewModel.getSleepers();
                 MainViewModel.favoriteChannelSemaphore.release(sleeepersnow);
-                lobbyViewModel.decreaseSleepers();
+                sleeepersnow = 0;
 
             }
 

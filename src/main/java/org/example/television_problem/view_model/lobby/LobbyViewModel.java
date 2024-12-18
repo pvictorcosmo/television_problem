@@ -425,9 +425,6 @@ public class LobbyViewModel implements ViewModel {
         sleepers++;
     }
 
-    public void decreaseSleepers() {
-        sleepers--;
-    }
 
     public void increaseSpectators() {
         spectators++;
