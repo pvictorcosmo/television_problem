@@ -221,9 +221,16 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                try {
+                    MainViewModel.mutexChannelSemaphore.acquire();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 sleeepersnow = lobbyViewModel.getSleepers();
                 MainViewModel.favoriteChannelSemaphore.release(sleeepersnow);
                 sleeepersnow = 0;
+                MainViewModel.mutexChannelSemaphore.release();
 
             }
 
