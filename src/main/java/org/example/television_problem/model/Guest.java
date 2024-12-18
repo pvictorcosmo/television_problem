@@ -29,6 +29,8 @@ public class Guest extends Thread {
     private DoubleProperty bedPositionY = new SimpleDoubleProperty(100);
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private GuestStatus status;
+    private int sleeepersnow;
+    
 
     public Guest(int id, int channel, int watchTime, int restTime, LobbyViewModel lobbyViewModel,
             GuestStatus status) {
@@ -211,6 +213,7 @@ public class Guest extends Thread {
                         // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
                     });
                 });
+                lobbyViewModel.increaseSleepers();
                 MainViewModel.mutexChannelSemaphore.release();
                 try {
                     MainViewModel.favoriteChannelSemaphore.acquire();
@@ -218,6 +221,9 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                sleeepersnow = lobbyViewModel.getSleepers();
+                MainViewModel.favoriteChannelSemaphore.release(sleeepersnow);
+                lobbyViewModel.decreaseSleepers();
 
             }
 

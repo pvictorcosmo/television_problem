@@ -33,6 +33,7 @@ public class LobbyViewModel implements ViewModel {
     public static Semaphore tvOfflineSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
+    private int sleepers;
     private Image normalSprite;
 
     public LobbyViewModel() {
@@ -414,6 +415,18 @@ public class LobbyViewModel implements ViewModel {
 
     public int getSpectators() {
         return this.spectators;
+    }
+
+    public int getSleepers() {
+        return this.sleepers;
+    }
+
+    public void increaseSleepers() {
+        sleepers++;
+    }
+
+    public void decreaseSleepers() {
+        sleepers--;
     }
 
     public void increaseSpectators() {

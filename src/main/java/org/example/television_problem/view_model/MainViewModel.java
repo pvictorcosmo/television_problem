@@ -25,6 +25,7 @@ public class MainViewModel implements ViewModel {
     public static  Semaphore mutexChannelSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
+    private int sleepers;
 
     private ListProperty<StackPane> squares = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -84,6 +85,14 @@ public class MainViewModel implements ViewModel {
 
     public void increaseSpectators() {
         spectators++;
+    }
+
+    public void increaseSleepers() {
+        sleepers++;
+    }
+
+    public void decreaseSleepers() {
+        sleepers--;
     }
 
     public void decreaseSpectators() {
