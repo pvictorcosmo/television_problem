@@ -122,7 +122,7 @@ public class Guest extends Thread {
 
             if (lobbyViewModel.getActuallyChannel() == -1) {
                 lobbyViewModel.setActuallyChannel(favoriteChannel);
-                Platform.runLater(()->{
+                Platform.runLater(() -> {
                     lobbyViewModel.updateChannel(favoriteChannel);
                 });
 
@@ -143,31 +143,15 @@ public class Guest extends Thread {
                 lobbyViewModel.increaseSpectators();
                 MainViewModel.mutexChannelSemaphore.release();
                 System.out.println("Status Thread: " + this.status);
-                if (this.status == GuestStatus.BLOCKED) {
-                    Platform.runLater(() -> {
-                        this.status = GuestStatus.WATCHING;
-                        // Movimento para a direita com o Runnable para movimentação para baixo depois
-                        lobbyViewModel.moveGuest(id, "LEFT", 600, () -> {
-
-                        });
-
-                        // lobbyViewModel.addSquare(id);
+                Platform.runLater(() -> {
+                    this.status = GuestStatus.WATCHING;
+                    lobbyViewModel.logEvent("Hóspede -" + id + " Finalmente pode assistir televisão");
+                    lobbyViewModel.moveGuestToSofa(id, () -> {
                     });
-                } else if (this.status == GuestStatus.WAITING) {
-                    Platform.runLater(() -> {
-                        this.status = GuestStatus.WATCHING;
-                        lobbyViewModel.moveGuest(id, "UP", 300, () -> {
-                            lobbyViewModel.moveGuest(id, "LEFT", 300, () -> {
-
-                            });
-                        });
-                    });
-                }
-                Utils.timeCpuBound(watchTime, () -> {
-                    lobbyViewModel.setImage(this, GuestSprite.BACK2);
-                    System.out.println("Hóspede " + id + " agora está: " + status);
-
                 });
+                // TODO
+                System.out.println("Hóspede " + id + " agora está: " + status);
+                Utils.timeCpuBound(watchTime);
                 System.out.println("Time's up!");
 
                 try {
@@ -181,6 +165,9 @@ public class Guest extends Thread {
                 // Se não houver mais espectadores, liberar o canal
                 if (lobbyViewModel.getSpectators() == 0) {
                     lobbyViewModel.setActuallyChannel(-1);
+                    Platform.runLater(() -> {
+                        lobbyViewModel.updateChannel(lobbyViewModel.getActuallyChannel());
+                    });
                     MainViewModel.tvOfflineSemaphore.release();
                     MainViewModel.favoriteChannelSemaphore.release();
                 }
@@ -188,6 +175,7 @@ public class Guest extends Thread {
                 MainViewModel.mutexChannelSemaphore.release();
                 Platform.runLater(() -> {
                     this.status = GuestStatus.WAITING;
+                    lobbyViewModel.logEvent("Hóspede -" + id + " Já cansou de ver televisão, irá descansar");
 
                     // Movimento para a direita com o Runnable para movimentação para baixo depois
 
@@ -195,9 +183,12 @@ public class Guest extends Thread {
                         // Quando o movimento para a direita terminar, move para baixo
                         lobbyViewModel.moveGuest(id, "DOWN", 300, () -> {
                             // Aqui você pode adicionar mais movimentos, se necessário
-                            System.out.println("Hóspede " + id + " terminou de se mover para baixo");
+                            lobbyViewModel.initWaitingAnimation(this);
                         });
                     });
+                    double sofaStartX = 140; // Posição inicial X do sofá
+                    double sofaWidth = 220; // Largura total do sofá
+                    lobbyViewModel.initializeSofaPositions(sofaStartX, sofaWidth);
                     // lobbyViewModel.moveGuest(id, "RIGHT", 300, () -> {
                     // // Quando o movimento para a direita terminar, move para baixo
                     // lobbyViewModel.moveGuest(id, "DOWN", 300, () -> {
@@ -206,16 +197,20 @@ public class Guest extends Thread {
                     // });
                     // });
                 });
-                Utils.timeCpuBound(restTime, () -> {
-                    lobbyViewModel.setImage(this, GuestSprite.BACK2);
-
-                    System.out.println("Hóspede " + id + " agora está: " + status);
-
-                });
+                lobbyViewModel.setImage(this, GuestSprite.BACK2);
+                System.out.println("Hóspede " + id + " agora está: " + status);
+                Utils.timeCpuBound(restTime);
+                lobbyViewModel.stopWaitingAnimation(this);
 
             } else {
                 // Liberar canal se não for o favorito
-
+                Platform.runLater(() -> {
+                    this.status = GuestStatus.BLOCKED;
+                    lobbyViewModel.logEvent("Hóspede -" + id + " Vai dormir um pouco zZzZzZ");
+                    lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
+                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
+                    });
+                });
                 MainViewModel.mutexChannelSemaphore.release();
                 try {
                     MainViewModel.favoriteChannelSemaphore.acquire();
@@ -223,13 +218,6 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> {
-                    this.status = GuestStatus.BLOCKED;
-                    // ir dormir
-                    lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
-                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
-                    });
-                });
 
             }
 

@@ -3,6 +3,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.Parent?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
     fx:controller="org.example.television_problem.view.lobby.LobbyView">
@@ -25,8 +26,7 @@
             </ImageView>
             <HBox fx:id="televisionContent" spacing="10" alignment="CENTER"
                 AnchorPane.topAnchor="-10.0"
-                AnchorPane.leftAnchor="100.0"  prefWidth="250" prefHeight="150">
-                <!-- As camas serão adicionadas aqui dinamicamente -->
+                AnchorPane.leftAnchor="100.0" prefWidth="250" prefHeight="150">
             </HBox>
 
 
@@ -36,7 +36,7 @@
                 <Image url="@../assets/couch.png" />
             </ImageView>
             <HBox fx:id="bedContainer" spacing="10" alignment="CENTER"
-                AnchorPane.topAnchor="50.0" AnchorPane.rightAnchor="200.0">
+                AnchorPane.topAnchor="50.0" AnchorPane.rightAnchor="50.0">
                 <!-- As camas serão adicionadas aqui dinamicamente -->
             </HBox>
 
@@ -46,9 +46,17 @@
                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                 <!-- Os Guests serão adicionados aqui dinamicamente -->
             </Pane>
+
             <Button fx:id="addGuestButton" text="Adicionar Hóspede"
                 onAction="#handleAddGuestButton" AnchorPane.bottomAnchor="10.0"
                 AnchorPane.rightAnchor="10.0" />
+
+            <TextArea fx:id="logTextArea" editable="false" wrapText="true" prefHeight="150"
+                prefWidth="300"
+                style="-fx-font-size: 12; -fx-text-fill: black; -fx-background-color: white;"
+                AnchorPane.topAnchor="10.0"
+                AnchorPane.rightAnchor="10.0" />
+
 
         </AnchorPane>
     </VBox>

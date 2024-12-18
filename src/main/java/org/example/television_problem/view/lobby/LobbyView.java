@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -22,7 +23,7 @@ public class LobbyView {
     private static final double GUEST_WIDTH = 60; // Largura do Guest
     private static final double GUEST_HEIGHT = 80; // Altura do Guest
 
-    private static final double START_X = 800; // Posição inicial X das camas
+    private static final double START_X = 500; // Posição inicial X das camas
     private static final double START_Y = 200; // Posição inicial Y das camas
     private int bedCount = 0; // Contador para camas (usado para calcular a posição)
 
@@ -32,7 +33,8 @@ public class LobbyView {
     private Pane guestContainer;
     @FXML
     private HBox televisionContent;
-
+    @FXML
+    private TextArea logTextArea; // Área para log de eventos
     @InjectViewModel
     private LobbyViewModel viewModel;
 
@@ -59,6 +61,11 @@ public class LobbyView {
         viewModel.currentImagePathProperty().addListener((obs, oldPath, newPath) -> {
             updateImage(newPath);
         });
+        viewModel.logProperty().addListener((obs, oldValue, newValue) -> {
+            // Quando o log for atualizado, adiciona o novo texto ao TextArea
+            System.out.println("New value: " + newValue);
+            logEvent(newValue);
+        });
         // Listener para adicionar ou remover sprites conforme a lista de guests mudar
         guests.addListener((ListChangeListener<Guest>) change -> {
             while (change.next()) {
@@ -79,6 +86,12 @@ public class LobbyView {
         for (Guest guest : guests) {
             createBedAndGuest(guest);
         }
+        logEvent("Lobby inicializado.");
+    }
+
+    private void logEvent(String message) {
+        // Adicionar a nova mensagem ao log
+        logTextArea.appendText(message + "\n");
     }
 
     @FXML
@@ -88,8 +101,22 @@ public class LobbyView {
 
     private void createBedAndGuest(Guest guest) {
         // Calcular a posição da cama com base no índice (bedCount)
+
         double positionX = START_X + (bedCount * (BED_WIDTH + 10)); // Espaço de 10px entre camas
         double positionY = START_Y;
+        double containerWidth = guestContainer.getPrefWidth();
+        if (containerWidth == 0) {
+            containerWidth = guestContainer.getScene().getWidth();
+        }
+
+        // Calcular a posição da cama com base no índice (bedCount)
+
+        // Verificar se a cama ultrapassa a borda direita da tela
+        if (positionX + BED_WIDTH > containerWidth) {
+            bedCount = 0; // Reinicia a contagem horizontal
+            positionX = START_X; // Reinicia a posição X
+            positionY += BED_HEIGHT + 20; // Incrementa a posição Y para a próxima linha
+        }
 
         // Criar a cama
         ImageView bedView = new ImageView();
@@ -131,17 +158,17 @@ public class LobbyView {
 
         // Criar o ID Label para o Guest
         Label idLabel = new Label();
-        idLabel.setText("ID: " + guest.getGuestId()); // Exibir o ID do guest
+        idLabel.setText("ID: " + guest.getGuestId() + "\nChannel: " + guest.getFavoriteChannel()); // Exibir o ID do guest
         idLabel.setStyle(
                 "-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: black;");
         idLabel.setTranslateX(positionX + (BED_WIDTH - GUEST_WIDTH) / 2); // Centraliza o label na cama
-        idLabel.setTranslateY(positionY - 20); // Coloca o label acima do sprite
+        idLabel.setTranslateY(positionY - 40); // Coloca o label acima do sprite
 
         // Vincular posição do ID Label ao modelo do Guest
         idLabel.translateXProperty().bind(Bindings.createDoubleBinding(
                 () -> guest.getPositionX() + (BED_WIDTH - GUEST_WIDTH) / 2, guest.positionXProperty()));
         idLabel.translateYProperty().bind(Bindings.createDoubleBinding(
-                () -> guest.getPositionY() - 20, guest.positionYProperty()));
+                () -> guest.getPositionY() - 40, guest.positionYProperty()));
 
         // Adicionar o Guest e o ID Label ao container
         guestContainer.getChildren().addAll(guestView, idLabel);

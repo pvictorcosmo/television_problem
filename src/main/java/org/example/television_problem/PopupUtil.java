@@ -1,5 +1,7 @@
 package org.example.television_problem;
 
+import org.example.television_problem.service.ControlTvService;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -14,7 +16,7 @@ import javafx.stage.Stage;
 public class PopupUtil {
 
     public interface PopupCallback {
-        void onFormSubmitted(String name, int channel, int ttv, int td);
+        void onFormSubmitted(int channel, int ttv, int td);
     }
 
     public static void showFormPopup(PopupCallback callback) {
@@ -22,12 +24,9 @@ public class PopupUtil {
         Stage popupStage = new Stage();
         popupStage.setTitle("Formulário de Informações");
 
-        // Campos do formulário
-        TextField nameField = new TextField();
-        nameField.setPromptText("Digite seu nome (opcional)");
-
         ComboBox<Integer> channelComboBox = new ComboBox<>();
-        for (int i = 1; i <= 100; i++) {
+        int channels = ControlTvService.getInstance().channels;
+        for (int i = 1; i <= channels; i++) {
             channelComboBox.getItems().add(i); // Adiciona canais de 1 a 100
         }
         channelComboBox.setPromptText("Escolha o canal");
@@ -40,7 +39,7 @@ public class PopupUtil {
 
         Button submitButton = new Button("Enviar");
         submitButton.setOnAction(_ -> {
-            String name = nameField.getText();
+
             Integer channel = channelComboBox.getValue();
             String ttv = ttvField.getText();
             String td = tdField.getText();
@@ -57,7 +56,7 @@ public class PopupUtil {
                 int tdTime = Integer.parseInt(td);
 
                 // Chama o callback com os valores preenchidos
-                callback.onFormSubmitted(name, channel, ttvTime, tdTime);
+                callback.onFormSubmitted(channel, ttvTime, tdTime);
 
                 // Fecha o popup
                 popupStage.close();
@@ -68,7 +67,7 @@ public class PopupUtil {
 
         // Layout do popup
         VBox vbox = new VBox(10,
-                new Label("Nome (opcional):"), nameField,
+
                 new Label("Canal (1 a N):"), channelComboBox,
                 new Label("Tempo assistindo TV (Ttv) [segundos]:"), ttvField,
                 new Label("Tempo descansando (Td) [segundos]:"), tdField,

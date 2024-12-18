@@ -1,5 +1,7 @@
 package org.example.television_problem.view_model.lobby;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,19 +37,61 @@ public class LobbyViewModel implements ViewModel {
 
     public LobbyViewModel() {
         // Inicializando guests, exemplo de 2 guests
-        Guest guest1 = new Guest(1, 1, 10, 10, this, GuestStatus.BLOCKED);
-        guest1.start();
-        Guest guest2 = new Guest(2, 2, 10, 10, this, GuestStatus.BLOCKED);
-        guest2.start();
-        guests.add(guest1);
-        guests.add(guest2);
+        // Guest guest1 = new Guest(1, 1, 10, 10, this, GuestStatus.BLOCKED);
+        // guest1.start();
+        // Guest guest2 = new Guest(2, 2, 10, 10, this, GuestStatus.BLOCKED);
+        // guest2.start();
+        // Guest guest3 = new Guest(3, 3, 10, 10, this, GuestStatus.BLOCKED);
+        // guest3.start();
+        // guests.add(guest1);
+        // guests.add(guest2);
+        // guests.add(guest3);
         loadFrames();
         currentImage.set(frontFrames[0]); // Imagem inicial
         initTimeline();
+        double sofaStartX = 140; // Posição inicial X do sofá
+        double sofaWidth = 220; // Largura total do sofá
+        initializeSofaPositions(sofaStartX, sofaWidth);
     }
 
     public ListProperty<Guest> getGuests() {
         return this.guests;
+    }
+
+    private Timeline waitingAnimationTimeline;
+
+    public void initWaitingAnimation(Guest guest) {
+        if (waitingAnimationTimeline != null && waitingAnimationTimeline.getStatus() == Timeline.Status.RUNNING) {
+            return; // Já está rodando
+        }
+
+        Image guestSprite = new Image(getClass()
+                .getResource("/org/example/television_problem/view/assets/sprites/front_1.png").toExternalForm());
+        Image jumpingSprite = new Image(getClass()
+                .getResource("/org/example/television_problem/view/assets/sprites/front_2.png").toExternalForm());
+
+        waitingAnimationTimeline = new Timeline(new KeyFrame(Duration.millis(200), event -> {
+            // Alterna o sprite apenas para o hóspede especificado
+            if (guest.getImage().equals(guestSprite)) {
+                guest.setImage(jumpingSprite);
+            } else {
+                guest.setImage(guestSprite);
+            }
+        }));
+
+        waitingAnimationTimeline.setCycleCount(Timeline.INDEFINITE);
+        waitingAnimationTimeline.play();
+    }
+
+    // Parar a animação de espera para um Guest específico
+    public void stopWaitingAnimation(Guest guest) {
+        if (waitingAnimationTimeline != null) {
+            waitingAnimationTimeline.stop();
+            waitingAnimationTimeline = null;
+
+            // Restaura o sprite normal apenas para o hóspede especificado
+            guest.setImage(normalSprite);
+        }
     }
 
     private final StringProperty currentImagePath = new SimpleStringProperty();
@@ -57,24 +101,87 @@ public class LobbyViewModel implements ViewModel {
     }
 
     public void updateChannel(int channel) {
-        String path = "/org/example/television_problem/view/assets/canal" + channel + ".png";
+        String path = "";
+        if (channel != -1) {
+            path = "/org/example/television_problem/view/assets/canal" + channel + ".png";
+        } else {
+            path = "/org/example/television_problem/view/assets/tv.png";
+        }
+
         currentImagePath.set(path);
     }
 
     private final DoubleProperty x = new SimpleDoubleProperty(1000);
     private final DoubleProperty y = new SimpleDoubleProperty(1000);
     private final ObjectProperty<Image> currentImage = new SimpleObjectProperty<>();
-
+    private static final double GUEST_WIDTH = 60; // Largura do Guest
     private Image[] frontFrames, backFrames, leftFrames, rightFrames;
     private int currentFrame = 0;
     private Timeline timeline;
+    private List<Double> sofaPositionsX; // Lista para armazenar posições X no sofá
+    private final double SOFA_Y = 200; // Posição fixa Y do sofá
+    private final double SOFA_SPACING = 10; // Espaçamento entre Guests no sofá
+
+    // Método de inicialização das posições no sofá
+    public void initializeSofaPositions(double sofaStartX, double sofaWidth) {
+        sofaPositionsX = new ArrayList<>();
+        double currentX = sofaStartX;
+
+        // Calcular posições disponíveis no sofá
+        while (currentX + GUEST_WIDTH <= sofaStartX + sofaWidth) {
+            sofaPositionsX.add(currentX);
+            currentX += GUEST_WIDTH + SOFA_SPACING; // Próxima posição com espaçamento
+        }
+    }
+
+    private final StringProperty logProperty = new SimpleStringProperty();
+
+    public StringProperty logProperty() {
+        return logProperty;
+    }
+
+    // Método para adicionar uma nova mensagem ao log
+    public void logEvent(String message) {
+        // Adiciona uma nova mensagem ao log
+
+        logProperty.set(message + "\n");
+    }
+
+    // Método para mover o Guest para o sofá
+    public void moveGuestToSofa(int guestId, Runnable onFinish) {
+        for (Guest guest : guests) {
+            if (guest.getGuestId() == guestId) {
+                if (sofaPositionsX.isEmpty()) {
+                    System.out.println("Sem posições livres no sofá!");
+                    return; // Sem posições disponíveis
+                }
+
+                // Pegar a primeira posição livre
+                double targetX = sofaPositionsX.remove(0);
+
+                moveGuestToBed(guestId, targetX, SOFA_Y, () -> {
+                    guest.setPositionX(targetX); // Atualiza posição X
+                    guest.setPositionY(SOFA_Y); // Atualiza posição Y
+                    System.out.println("Guest " + guestId + " chegou ao sofá na posição X: " + targetX);
+                    setImage(guest, GuestSprite.BACK2);
+
+                    if (onFinish != null) {
+                        onFinish.run();
+                    }
+                });
+                break;
+            }
+        }
+    }
 
     public void moveGuestToBed(int guestId, double bedX, double bedY, Runnable onFinish) {
         for (Guest guest : guests) {
             if (guest.getGuestId() == guestId) {
-                // Calcular distâncias
+                // Pegar posição atual do Guest
                 double currentX = guest.getPositionX();
                 double currentY = guest.getPositionY();
+
+                // Calcular distâncias
                 double deltaX = bedX - currentX;
                 double deltaY = bedY - currentY;
 
@@ -88,12 +195,52 @@ public class LobbyViewModel implements ViewModel {
 
                 // Primeiro movimento horizontal, depois vertical
                 moveGuest(guestId, horizontalDirection, distanceX, () -> {
-                    moveGuest(guestId, verticalDirection, distanceY, onFinish);
+                    // Atualiza a posição X após movimento horizontal
+                    guest.setPositionX(bedX);
+
+                    moveGuest(guestId, verticalDirection, distanceY, () -> {
+                        // Atualiza a posição Y após movimento vertical
+                        guest.setPositionY(bedY);
+
+                        if (onFinish != null) {
+
+                            onFinish.run(); // Callback final
+
+                        }
+                    });
                 });
+
                 break;
             }
         }
     }
+
+    // public void moveGuestToCouch(int guestId, double couchX, double couchY,
+    // Runnable onFinish) {
+    // for (Guest guest : guests) {
+    // if (guest.getGuestId() == guestId) {
+    // // Calcular distâncias
+    // double currentX = guest.getPositionX();
+    // double currentY = guest.getPositionY();
+    // double deltaX = bedX - currentX;
+    // double deltaY = bedY - currentY;
+
+    // // Determinar direções
+    // String horizontalDirection = deltaX > 0 ? "RIGHT" : "LEFT";
+    // String verticalDirection = deltaY > 0 ? "DOWN" : "UP";
+
+    // // Distâncias absolutas
+    // int distanceX = (int) Math.abs(deltaX);
+    // int distanceY = (int) Math.abs(deltaY);
+
+    // // Primeiro movimento horizontal, depois vertical
+    // moveGuest(guestId, horizontalDirection, distanceX, () -> {
+    // moveGuest(guestId, verticalDirection, distanceY, onFinish);
+    // });
+    // break;
+    // }
+    // }
+    // }
 
     private void loadFrames() {
         normalSprite = new Image(getClass()
@@ -224,13 +371,12 @@ public class LobbyViewModel implements ViewModel {
 
     }
 
-    private int lastId = 0;
+    private int lastId = 1;
 
     public void openGuestForm() {
         Platform.runLater(() -> {
-            PopupUtil.showFormPopup((name, channel, ttv, td) -> {
+            PopupUtil.showFormPopup((channel, ttv, td) -> {
                 System.out.println("Formulário enviado!");
-                System.out.println("Nome: " + (name.isEmpty() ? "Não informado" : name));
                 System.out.println("Canal: " + channel);
                 System.out.println("Tempo Assistindo TV (Ttv): " + ttv + " segundos");
                 System.out.println("Tempo Descansando (Td): " + td + " segundos");
