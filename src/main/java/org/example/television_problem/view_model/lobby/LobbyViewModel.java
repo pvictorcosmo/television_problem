@@ -34,19 +34,23 @@ public class LobbyViewModel implements ViewModel {
     private int actuallyChannel = -1;
     private int spectators;
     private int sleepers;
+
     private Image normalSprite;
 
     public LobbyViewModel() {
         // Inicializando guests, exemplo de 2 guests
-        // Guest guest1 = new Guest(1, 1, 10, 10, this, GuestStatus.BLOCKED);
-        // guest1.start();
-        // Guest guest2 = new Guest(2, 2, 10, 10, this, GuestStatus.BLOCKED);
-        // guest2.start();
-        // Guest guest3 = new Guest(3, 3, 10, 10, this, GuestStatus.BLOCKED);
-        // guest3.start();
-        // guests.add(guest1);
-        // guests.add(guest2);
-        // guests.add(guest3);
+        /*Guest guest1 = new Guest(1, 1, 10, 10, this, GuestStatus.BLOCKED);
+        guest1.start();
+        Guest guest2 = new Guest(2, 1, 10, 10, this, GuestStatus.BLOCKED);
+        guest2.start();
+        Guest guest3 = new Guest(3, 2, 10, 10, this, GuestStatus.BLOCKED);
+        guest3.start();
+        Guest guest4 = new Guest(4, 3, 10, 10, this, GuestStatus.BLOCKED);
+        guest4.start();
+        guests.add(guest1);
+        guests.add(guest2);
+        guests.add(guest3);
+        guests.add(guest4);*/
         loadFrames();
         currentImage.set(frontFrames[0]); // Imagem inicial
         initTimeline();
@@ -59,19 +63,14 @@ public class LobbyViewModel implements ViewModel {
         return this.guests;
     }
 
-    private Timeline waitingAnimationTimeline;
-
     public void initWaitingAnimation(Guest guest) {
-        if (waitingAnimationTimeline != null && waitingAnimationTimeline.getStatus() == Timeline.Status.RUNNING) {
-            return; // Já está rodando
-        }
 
         Image guestSprite = new Image(getClass()
                 .getResource("/org/example/television_problem/view/assets/sprites/front_1.png").toExternalForm());
         Image jumpingSprite = new Image(getClass()
                 .getResource("/org/example/television_problem/view/assets/sprites/front_2.png").toExternalForm());
 
-        waitingAnimationTimeline = new Timeline(new KeyFrame(Duration.millis(200), event -> {
+        guest.waitingAnimationTimeline = new Timeline(new KeyFrame(Duration.millis(200), event -> {
             // Alterna o sprite apenas para o hóspede especificado
             if (guest.getImage().equals(guestSprite)) {
                 guest.setImage(jumpingSprite);
@@ -80,19 +79,16 @@ public class LobbyViewModel implements ViewModel {
             }
         }));
 
-        waitingAnimationTimeline.setCycleCount(Timeline.INDEFINITE);
-        waitingAnimationTimeline.play();
+        guest.waitingAnimationTimeline.setCycleCount(Timeline.INDEFINITE);
+        guest.waitingAnimationTimeline.play();
     }
 
     // Parar a animação de espera para um Guest específico
     public void stopWaitingAnimation(Guest guest) {
-        if (waitingAnimationTimeline != null) {
-            waitingAnimationTimeline.stop();
-            waitingAnimationTimeline = null;
+        guest.waitingAnimationTimeline.stop();
 
-            // Restaura o sprite normal apenas para o hóspede especificado
-            guest.setImage(normalSprite);
-        }
+        // Restaura o sprite normal apenas para o hóspede especificado
+        guest.setImage(normalSprite);
     }
 
     private final StringProperty currentImagePath = new SimpleStringProperty();
@@ -150,6 +146,7 @@ public class LobbyViewModel implements ViewModel {
 
     // Método para mover o Guest para o sofá
     public void moveGuestToSofa(int guestId, Runnable onFinish) {
+        System.out.println("move guest to sofa");
         for (Guest guest : guests) {
             if (guest.getGuestId() == guestId) {
                 if (sofaPositionsX.isEmpty()) {
@@ -176,6 +173,7 @@ public class LobbyViewModel implements ViewModel {
     }
 
     public void moveGuestToBed(int guestId, double bedX, double bedY, Runnable onFinish) {
+        System.out.println("move guest to bed");
         for (Guest guest : guests) {
             if (guest.getGuestId() == guestId) {
                 // Pegar posição atual do Guest
@@ -289,7 +287,6 @@ public class LobbyViewModel implements ViewModel {
     public void moveGuest(int guestId, String direction, int distance, Runnable onFinish) {
         for (Guest guest : guests) {
             if (guest.getGuestId() == guestId) {
-                System.out.println("moving: " + guestId);
                 switch (direction) {
                     case "UP":
                         moveUp(guest, distance, onFinish);
@@ -422,9 +419,13 @@ public class LobbyViewModel implements ViewModel {
     }
 
     public void increaseSleepers() {
+
         sleepers++;
     }
 
+    public void setSleepers(int slepers) {
+        sleepers = slepers;
+    }
 
     public void increaseSpectators() {
         spectators++;

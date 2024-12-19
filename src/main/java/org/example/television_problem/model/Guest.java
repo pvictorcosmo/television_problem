@@ -30,7 +30,8 @@ public class Guest extends Thread {
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private GuestStatus status;
     private int sleeepersnow;
-    
+    public Timeline waitingAnimationTimeline;
+    private boolean isInitialize = true;
 
     public Guest(int id, int channel, int watchTime, int restTime, LobbyViewModel lobbyViewModel,
             GuestStatus status) {
@@ -146,6 +147,7 @@ public class Guest extends Thread {
                 MainViewModel.mutexChannelSemaphore.release();
                 System.out.println("Status Thread: " + this.status);
                 Platform.runLater(() -> {
+                    isInitialize = true;
                     this.status = GuestStatus.WATCHING;
                     lobbyViewModel.logEvent("Hóspede -" + id + " Finalmente pode assistir televisão");
                     lobbyViewModel.moveGuestToSofa(id, () -> {
@@ -206,15 +208,24 @@ public class Guest extends Thread {
 
             } else {
                 // Liberar canal se não for o favorito
-                Platform.runLater(() -> {
-                    this.status = GuestStatus.BLOCKED;
-                    lobbyViewModel.logEvent("Hóspede -" + id + " Vai dormir um pouco zZzZzZ");
-                    lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
-                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
-                    });
-                });
+
                 lobbyViewModel.increaseSleepers();
                 MainViewModel.mutexChannelSemaphore.release();
+                System.out.println("isInitialize: " + isInitialize);
+
+                if (isInitialize) {
+                    Platform.runLater(() -> {
+                        isInitialize = false;
+                        System.out.println("sleeping");
+                        this.status = GuestStatus.BLOCKED;
+                        lobbyViewModel.logEvent("Hóspede -" + id + " Vai dormir um pouco zZzZzZ");
+                        lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
+                        });
+
+                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
+                    });
+                }
+
                 try {
                     MainViewModel.favoriteChannelSemaphore.acquire();
                 } catch (InterruptedException e) {
@@ -227,9 +238,23 @@ public class Guest extends Thread {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                sleeepersnow = lobbyViewModel.getSleepers();
+                sleeepersnow = lobbyViewModel.getSleepers() ;
+                System.out.println("sleepersNow: " + sleeepersnow);
                 MainViewModel.favoriteChannelSemaphore.release(sleeepersnow);
                 sleeepersnow = 0;
+                lobbyViewModel.setSleepers(0);
+                if (isInitialize) {
+                    Platform.runLater(() -> {
+                        isInitialize = false;
+                        System.out.println("sleeping");
+                        this.status = GuestStatus.BLOCKED;
+                        lobbyViewModel.logEvent("Hóspede -" + id + " Vai dormir um pouco zZzZzZ");
+                        lobbyViewModel.moveGuestToBed(id, bedPositionX.get(), bedPositionY.get(), () -> {
+                        });
+
+                        // System.out.println("Guest " + guest.getGuestId() + " chegou à cama.");
+                    });
+                }
                 MainViewModel.mutexChannelSemaphore.release();
 
             }

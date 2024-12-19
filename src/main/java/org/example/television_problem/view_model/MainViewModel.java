@@ -22,6 +22,7 @@ public class MainViewModel implements ViewModel {
 
     public static final Semaphore favoriteChannelSemaphore = new Semaphore(1);
     public static Semaphore tvOfflineSemaphore = new Semaphore(1);
+    public static Semaphore sleepingSemaphore = new Semaphore(1);
     public static  Semaphore mutexChannelSemaphore = new Semaphore(1);
     private int actuallyChannel = -1;
     private int spectators;
